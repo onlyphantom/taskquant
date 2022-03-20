@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
 import sys
+import warnings
 from datetime import timedelta
 from itertools import groupby
 
@@ -10,11 +10,23 @@ try:
 except ImportError:
     from utils.create_table import create_table
 
-tw = TaskWarrior(data_location="~/vaults/tasks")
+from utils.colors import textstyle
 
 
-def main():
+def score_accum(task_path, verbosity=False):
+    """
+    Create a scoreboard using 'score' attribute of tasks
+    """
+    tw = TaskWarrior(data_location=task_path)
+
     completed = tw.tasks.completed()
+    total_completed = len(completed)
+
+    if total_completed < 1:
+        return warnings.warn(
+            f"{textstyle.OKCYAN}A curious case of 0 completed tasks. Check {textstyle.WARNING}{task_path}{textstyle.OKCYAN} to make sure the path to Taskwarrior's .task is set correctly or try to complete some tasks in Taskwarrior!{textstyle.RESET}",
+        )
+
     cl = list()
 
     for task in completed:
@@ -56,12 +68,27 @@ def main():
         combined_l.append([str(key), fulldate[key], rollingdate[key]])
 
     combined_l_headers = ["Date", "Score", "Cumulative"]
+    # f'\033[1m\033[4m{x}\033[0m'
+    combined_l_headers = list(
+        map(
+            lambda x: f"{textstyle.BOLD}{textstyle.UNDERLINE}{textstyle.OKCYAN}{x}{textstyle.RESET}",
+            combined_l_headers,
+        )
+    )
 
     if "tabulate" in sys.modules:
         print(tabulate(combined_l, headers=combined_l_headers, tablefmt="pretty"))
     else:
         create_table(combined_l, headers=combined_l_headers)
 
+    if verbosity:
+        print(
+            f"{textstyle.NORDBG2BOLD}Total completed tasks:{textstyle.RESET}{textstyle.OKGREEN} {total_completed}{textstyle.RESET}"
+        )
+        print(
+            f"{textstyle.NORDBG1BOLD}Active dates:{textstyle.RESET}{textstyle.OKGREEN} {len(agg_date)}{textstyle.RESET}"
+        )
+
 
 if __name__ == "__main__":
-    main()
+    score_accum()

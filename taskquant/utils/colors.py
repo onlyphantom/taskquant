@@ -4,12 +4,12 @@ Reference:
 # 2. https://i.stack.imgur.com/9UVnC.png
 
 Usage:
-print(f"{bcolors.BOLD}{bcolors.UNDERLINE}Welcome to TaskQuaNT{bcolors.RESET}")
+print(f"{textstyle.BOLD}{textstyle.UNDERLINE}Welcome to TaskQuanT{textstyle.RESET}")
 -> print(f"\033[1m\033[4mWelcome to TaskQuant\033[0m")
 """
 
 
-class bcolors:
+class textstyle:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"
