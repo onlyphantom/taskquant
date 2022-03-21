@@ -1,3 +1,6 @@
 .vscode/
 */__pycache__/
 __pycache__/
+dist/
+taskquant.egg-info/
+build/

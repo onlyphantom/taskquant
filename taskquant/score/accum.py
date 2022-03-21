@@ -8,9 +8,9 @@ from tasklib import TaskWarrior
 try:
     from tabulate import tabulate
 except ImportError:
-    from utils.create_table import create_table
+    from taskquant.utils.create_table import create_table
 
-from utils.colors import textstyle
+from taskquant.utils.colors import textstyle
 
 
 def score_accum(task_path, verbosity=False):
