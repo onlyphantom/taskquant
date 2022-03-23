@@ -72,6 +72,36 @@ tq -h
 - [tasklib](https://github.com/GothenburgBitFactory/tasklib)
 - (Optional) [tabulate](https://github.com/astanin/python-tabulate)
 
+#### Testing
+Tests are written in `unittest` and stored in the `tests` directory.
+
+To execute tests without arguments and automatic test discovery:
+
+```bash
+python -m unittest 
+```
+
+To test a specific test file (`-v` for verbose output):
+
+```bash
+python -m unittest -v tests/test_accum.py
+
+test_create_combined_table (tests.test_accum.TestAccum) ... ok
+test_create_full_date ... ok
+test_create_table_auto (tests.test_accum.TestAccum) ... ok
+test_extract_tasks (tests.test_accum.TestAccum) ... ok
+test_fill_rolling_date (tests.test_accum.TestAccum) ... ok
+test_invalid_path_warning (tests.test_accum.TestAccum) ... ok
+test_task_to_dict (tests.test_accum.TestAccum) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.049s
+
+OK
+
+
+```
+
 ### Roadmap
 - Argparse to optionally specify a path to your tasks file
 - Add terminal-based charts and graphs

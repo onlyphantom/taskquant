@@ -4,3 +4,4 @@ __pycache__/
 dist/
 taskquant.egg-info/
 build/
+tests/testdata/
