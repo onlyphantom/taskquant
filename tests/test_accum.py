@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 import unittest
-from unittest import mock
 from unittest.mock import patch
 
 from taskquant.score.accum import (
@@ -40,32 +39,30 @@ class TestAccum(unittest.TestCase):
         self.assertGreater(len(completed), 0)
 
     def test_task_to_dict(self):
-        valid_task_path = "~/vaults/tasks"
-        tasks = score_accum(task_path=valid_task_path)
+        task_path = "~/vaults/tasks"
+        tasks = _extract_tasks(task_path)
         # days_apart = abs((tasks[-1]["end"] - tasks[0]["end"]).days)
         days_apart = diff_date(tasks[-1]["end"], tasks[0]["end"])
 
         agg_date_dict, _, _ = _task_to_dict(tasks)
-
         self.assertEqual(len(agg_date_dict), days_apart)
 
     def test_create_full_date(self):
-        valid_task_path = "~/vaults/tasks"
-        tasks = score_accum(task_path=valid_task_path)
+        task_path = "~/vaults/tasks"
+        tasks = _extract_tasks(task_path)
         agg_date_dict, startdate, enddate = _task_to_dict(tasks)
         fulldate = _create_full_date(startdate, enddate, agg_date_dict)
 
         # expect number of keys to be equal to number of days between start and end date (inclusive, +1)
-        expected_n_keys = (
-            diff_date(list(fulldate.keys())[-1], list(fulldate.keys())[0]) + 1
-        )
+        expected_n_keys = diff_date(enddate, startdate) + 1
         self.assertEqual(len(fulldate), expected_n_keys)
 
     def test_fill_rolling_date(self):
         fulldate = create_mock_fulldate()
         rollingdate = _fill_rolling_date(fulldate)
 
-        self.assertEqual(list(rollingdate.values())[-1], sum(fulldate.values()))
+        expected = sum(fulldate.values())
+        self.assertEqual(list(rollingdate.values())[-1], expected)
 
         self.assertEqual(
             list(rollingdate.values())[-2], sum(list(fulldate.values())[:-1])
@@ -76,34 +73,27 @@ class TestAccum(unittest.TestCase):
         rollingdate = _fill_rolling_date(fulldate)
         combined_l = _create_combined_table(fulldate, rollingdate)
 
-        self.assertEqual(len(combined_l), len(fulldate))
-        self.assertListEqual([str(date.today() + timedelta(9)), 9, 45], combined_l[-1])
+        expected = [str(date.today() + timedelta(days=9)), 9, 45]
+        self.assertListEqual(expected, combined_l[-1])
 
     def test_create_table_auto(self):
         fulldate = create_mock_fulldate()
         rollingdate = _fill_rolling_date(fulldate)
         combined_l = _create_combined_table(fulldate, rollingdate)
-        headers = ["Date", "Total", "Rolling"]
+        headers = ["Date", "Score", "Cumulative"]
 
         with patch("builtins.print") as mock_print:
             _create_table_auto(combined_l, headers, False, 9, 9, True)
 
             import sys
 
-            # sys.stdout.write(str(mock_print.call_args) + "\n")
             print(str(mock_print.call_args_list[0]))
-            expected_header = "\\t" + "\\t\\t".join([*headers]) + "\\t"
+            expected_header = "\\t" + "\\t\\t".join(headers) + "\\t"
             mock_print.assert_called_with("call('{}')".format(expected_header))
 
-            # last time:
-            # .call('\t2022-04-01\t\t9\t\t45\t')
-            # last item in combined_l is [str(date.today() + timedelta(9)), 9, 45]
-            # mock_print.assert_called_with(
-            #     "\t".join(["", str(date.today() + timedelta(9)), "9", "45", ""])
-            # )
             print(str(mock_print.call_args_list[10]))
             expected_lastrow = "\\t".join(
-                ["", str(date.today() + timedelta(9)), "", "9", "", "45", ""]
+                ["", str(date.today() + timedelta(days=9)), "", "9", "", "45", ""]
             )
             mock_print.assert_called_with("call('{}')".format(expected_lastrow))
 

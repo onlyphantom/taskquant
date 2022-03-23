@@ -66,6 +66,9 @@ def _task_to_dict(tasks):
 
 
 def _create_full_date(startdate, enddate, agg_date_dict):
+    """
+    Creating an unbroken series of date given a start and end date
+    """
     fulldate = {}
     while startdate <= enddate:
         fulldate.update({startdate: agg_date_dict.get(startdate, 0)})
@@ -74,6 +77,9 @@ def _create_full_date(startdate, enddate, agg_date_dict):
 
 
 def _fill_rolling_date(fulldate):
+    """
+    Perform a rolling sum using fulldate
+    """
     rollingdate = {}
     accu = 0
     for k, v in fulldate.items():
