@@ -123,11 +123,10 @@ def score_accum(task_path, verbosity=False, weekly=False):
     rollingdate = _fill_rolling_date(fulldate)
 
     combined_l = _create_combined_table(fulldate, rollingdate)
-
     if weekly:
 
         combined_l = [
-            [str(k), sum(v[1] for v in g)]
+            [k, sum(v[1] for v in g)]
             for k, g in groupby(combined_l, key=lambda x: x[0].isocalendar()[1])
         ]
 
