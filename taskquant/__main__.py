@@ -9,6 +9,8 @@ parser = argparse.ArgumentParser(
     description="CLI utility that extends taskwarrior for productivity scoreboard & gamification"
 )
 parser.add_argument("-p", "--path", type=dir_path, help="path to your .task")
+parser.add_argument("-w", "--weekly", action="store_true", help="weekly score")
+
 # add verbose flag
 parser.add_argument("-v", "--verbose", action="store_true", help="verbose mode")
 
@@ -16,7 +18,11 @@ args = parser.parse_args()
 
 
 def main():
-    score_accum(task_path=args.path or "~/.task", verbosity=args.verbose)
+    score_accum(
+        task_path=args.path or "~/.task",
+        verbosity=args.verbose,
+        weekly=args.weekly,
+    )
 
     # if verbose
     if args.verbose:

@@ -60,6 +60,20 @@ Active dates: 13
 task_path: /home/samuel/vaults/tasks
 ```
 
+You can also print a weekly (`-w`) version of the scoresheet:
+
+```bash
+tq -w 
++-------+-------+------------+
+| Week# | Score | Cumulative |
++-------+-------+------------+
+|  10   |  56   |     56     |
+|  11   |  33   |     89     |
+|  12   |  26   |    115     |
+|  13   |  12   |    127     |
++-------+-------+------------+
+```
+The first column refers to the ISO week number of the year.
 
 
 - To see all optional arguments, use the `-h` (`help`) argument.
@@ -103,7 +117,6 @@ OK
 ```
 
 ### Roadmap
-- Argparse to optionally specify a path to your tasks file
 - Add terminal-based charts and graphs
 - New ways to visualize scores based on tags, projects or other attributes
 

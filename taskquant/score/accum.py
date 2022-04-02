@@ -1,3 +1,11 @@
+"""
+In Development, run taskquant as module to be able to pass arguments
+collected by argparse (__main__.py):
+
+python -m taskquant -p ~/vaults/tasks -v
+"""
+
+import enum
 import sys
 import warnings
 from datetime import timedelta
@@ -92,11 +100,11 @@ def _fill_rolling_date(fulldate):
 def _create_combined_table(fulldate, rollingdate):
     combined_l = []
     for key in fulldate.keys():
-        combined_l.append([str(key), fulldate[key], rollingdate[key]])
+        combined_l.append([key, fulldate[key], rollingdate[key]])
     return combined_l
 
 
-def score_accum(task_path, verbosity=False):
+def score_accum(task_path, verbosity=False, weekly=False):
     """
     Create a scoreboard using 'score' attribute of tasks
     """
@@ -115,13 +123,35 @@ def score_accum(task_path, verbosity=False):
     rollingdate = _fill_rolling_date(fulldate)
 
     combined_l = _create_combined_table(fulldate, rollingdate)
-    combined_l_headers = list(
-        map(
-            # f'\033[1m\033[4m{x}\033[0m'
-            lambda x: f"{textstyle.BOLD}{textstyle.UNDERLINE}{textstyle.OKCYAN}{x}{textstyle.RESET}",
-            ["Date", "Score", "Cumulative"],
+
+    if weekly:
+
+        combined_l = [
+            [str(k), sum(v[1] for v in g)]
+            for k, g in groupby(combined_l, key=lambda x: x[0].isocalendar()[1])
+        ]
+
+        for i, l in enumerate(combined_l):
+            if i == 0:
+                l.append(l[1])
+            else:
+                l.append(l[1] + combined_l[i - 1][2])
+
+        combined_l_headers = list(
+            map(
+                # f'\033[1m\033[4m{x}\033[0m'
+                lambda x: f"{textstyle.BOLD}{textstyle.UNDERLINE}{textstyle.OKCYAN}{x}{textstyle.RESET}",
+                ["Week#", "Score", "Cumulative"],
+            )
         )
-    )
+    else:
+        combined_l_headers = list(
+            map(
+                # f'\033[1m\033[4m{x}\033[0m'
+                lambda x: f"{textstyle.BOLD}{textstyle.UNDERLINE}{textstyle.OKCYAN}{x}{textstyle.RESET}",
+                ["Date", "Score", "Cumulative"],
+            )
+        )
 
     _create_table_auto(
         combined_l,

@@ -1,0 +1,3 @@
+## Changelog
+##### v0.0.5
+- Introduces a weekly (`-w`) flag, allowing users to aggregate their scoresheet by week (instead of by day).
