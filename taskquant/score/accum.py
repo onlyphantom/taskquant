@@ -5,7 +5,6 @@ collected by argparse (__main__.py):
 python -m taskquant -p ~/vaults/tasks -v
 """
 
-import enum
 import sys
 import warnings
 from datetime import timedelta
@@ -104,6 +103,21 @@ def _create_combined_table(fulldate, rollingdate):
     return combined_l
 
 
+def _create_weekly_rollingsum(combined_l):
+    combined_l = [
+        [k, sum(v[1] for v in g)]
+        for k, g in groupby(combined_l, key=lambda x: x[0].isocalendar()[1])
+    ]
+
+    for i, l in enumerate(combined_l):
+        if i == 0:
+            l.append(l[1])
+        else:
+            l.append(l[1] + combined_l[i - 1][2])
+
+    return combined_l
+
+
 def score_accum(task_path, verbosity=False, weekly=False):
     """
     Create a scoreboard using 'score' attribute of tasks
@@ -124,18 +138,7 @@ def score_accum(task_path, verbosity=False, weekly=False):
 
     combined_l = _create_combined_table(fulldate, rollingdate)
     if weekly:
-
-        combined_l = [
-            [k, sum(v[1] for v in g)]
-            for k, g in groupby(combined_l, key=lambda x: x[0].isocalendar()[1])
-        ]
-
-        for i, l in enumerate(combined_l):
-            if i == 0:
-                l.append(l[1])
-            else:
-                l.append(l[1] + combined_l[i - 1][2])
-
+        combined_l = _create_weekly_rollingsum(combined_l)
         combined_l_headers = list(
             map(
                 # f'\033[1m\033[4m{x}\033[0m'

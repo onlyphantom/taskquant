@@ -10,6 +10,7 @@ from taskquant.score.accum import (
     _fill_rolling_date,
     _create_combined_table,
     _create_table_auto,
+    _create_weekly_rollingsum,
 )
 
 
@@ -42,7 +43,7 @@ class TestAccum(unittest.TestCase):
         task_path = "~/vaults/tasks"
         tasks = _extract_tasks(task_path)
         # days_apart = abs((tasks[-1]["end"] - tasks[0]["end"]).days)
-        days_apart = diff_date(tasks[-1]["end"], tasks[0]["end"])
+        days_apart = diff_date(tasks[0]["end"], tasks[-1]["end"])
 
         agg_date_dict, _, _ = _task_to_dict(tasks)
         self.assertEqual(len(agg_date_dict), days_apart)
@@ -73,7 +74,7 @@ class TestAccum(unittest.TestCase):
         rollingdate = _fill_rolling_date(fulldate)
         combined_l = _create_combined_table(fulldate, rollingdate)
 
-        expected = [str(date.today() + timedelta(days=9)), 9, 45]
+        expected = [date.today() + timedelta(days=9), 9, 45]
         self.assertListEqual(expected, combined_l[-1])
 
     def test_create_table_auto(self):
@@ -96,6 +97,39 @@ class TestAccum(unittest.TestCase):
                 ["", str(date.today() + timedelta(days=9)), "", "9", "", "45", ""]
             )
             mock_print.assert_called_with("call('{}')".format(expected_lastrow))
+
+    def test_weekly_flag(self):
+        combined_l = [
+            [date(2022, 3, 9), 0, 0],
+            [date(2022, 3, 10), 8, 8],
+            [date(2022, 3, 11), 1, 9],
+            [date(2022, 3, 12), 43, 52],
+            [date(2022, 3, 13), 4, 56],
+            [date(2022, 3, 14), 4, 60],
+            [date(2022, 3, 15), 7, 67],
+            [date(2022, 3, 16), 9, 76],
+            [date(2022, 3, 17), 4, 80],
+            [date(2022, 3, 18), 4, 84],
+            [date(2022, 3, 19), 3, 87],
+            [date(2022, 3, 20), 2, 89],
+            [date(2022, 3, 21), 7, 96],
+            [date(2022, 3, 22), 5, 101],
+            [date(2022, 3, 23), 5, 106],
+            [date(2022, 3, 24), 2, 108],
+            [date(2022, 3, 25), 1, 109],
+            [date(2022, 3, 26), 6, 115],
+            [date(2022, 3, 27), 0, 115],
+            [date(2022, 3, 28), 4, 119],
+            [date(2022, 3, 29), 5, 124],
+            [date(2022, 3, 30), 1, 125],
+            [date(2022, 3, 31), 2, 127],
+            [date(2022, 4, 1), 0, 127],
+            [date(2022, 4, 2), 2, 129],
+        ]
+        actual = _create_weekly_rollingsum(combined_l)
+        expected = [[10, 56, 56], [11, 33, 89], [12, 26, 115], [13, 14, 129]]
+
+        self.assertListEqual(actual, expected)
 
 
 if __name__ == "__main__":
