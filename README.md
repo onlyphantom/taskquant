@@ -22,6 +22,11 @@ TaskQuant is available on [pypi](https://pypi.org/project/taskquant/).
 ```
 pip install taskquant
 ```
+If you so desire, you can optionally install `tabulate` to get a prettier table output (this is completely optional, and pure cosmetic):
+```
+pip install tabulate
+```
+
 
 ### Usage
 Install the package and execute:
