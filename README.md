@@ -121,5 +121,8 @@ OK
 - New ways to visualize scores based on tags, projects or other attributes
 
 ### Links to Tutorials
-- _to be updated_
-
+Watch how we build this package, line by line (detailed tutorial):
+- [Building TaskQuant | Part 1](https://youtu.be/lT2jqmhRkxo)
+- [Taskwarrior: Terminal-based task management Quick Tour](https://youtu.be/cDYIes9avW4)
+- [Building TaskQuant | Full Playlist](https://youtube.com/playlist?list=PLXsFtK46HZxXIVE4tRjwMjwKFVaQSdT5W)
+- [Dev.to article: Todo + gamification with Taskwarrior & Taskquant](https://dev.to/onlyphantom/todo-gamification-with-taskwarrior-taskquant-3e38)
